@@ -1,6 +1,6 @@
 package FolderManager;
 
-import UDP.UdpUnicastClient;
+import FT_Rapid.Buffer;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,14 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FolderWatcher implements Runnable{
-
-    UdpUnicastClient user;
-
     Path path;
+    Buffer sender;
 
-    public FolderWatcher(Path path, UdpUnicastClient user) {
-        this.user = user;
+    public FolderWatcher(Path path,Buffer buffer) {
         this.path = path;
+        sender = buffer;
     }
 
     public void run() {

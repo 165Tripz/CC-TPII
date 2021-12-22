@@ -1,4 +1,4 @@
-package UDP;
+package FT_Rapid;
 
 import java.net.DatagramPacket;
 import java.util.ArrayDeque;
@@ -15,7 +15,7 @@ public class Buffer {
     Condition cond;
 
     public Buffer(){
-        buffer = new ArrayDeque<DatagramPacket>();
+        buffer = new ArrayDeque<>();
         l = new ReentrantLock();
         cond = l.newCondition();
     }

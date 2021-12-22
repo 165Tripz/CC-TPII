@@ -1,4 +1,4 @@
-package UDP;
+package FT_Rapid;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,20 +17,20 @@ public class Codex {
         return result;
     }
 
-    public byte[] longToBytes(long x) {
+    public byte[] getdata(long x) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(x);
         return buffer.array();
     }
 
-    public long bytesToLong(byte[] bytes) {
+    public long enumerate(byte[] bytes) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.put(bytes);
         buffer.flip();
         return buffer.getLong();
     }
 
-    public byte[] encryptMessage(byte[] messageEncripted ,String keyBytes,int length){
+    public byte[] encrypt(byte[] messageEncripted , String keyBytes, int length){
         try {
 
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -41,7 +41,7 @@ public class Codex {
             checksum.update(encriptado, 0,encriptado.length);
 
             long checksumValue = checksum.getValue();
-            return concatenateByteArrays(encriptado,longToBytes(checksumValue));
+            return concatenateByteArrays(encriptado,getdata(checksumValue));
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -50,7 +50,7 @@ public class Codex {
         return null;
     }
 
-    public byte[] decryptMessage(byte[] encryptedMessage, String keyBytes,int length) {
+    public byte[] decrypt(byte[] encryptedMessage, String keyBytes, int length) {
         try {
             int index = length - 8;
             byte[] tail = new byte[8];
@@ -66,7 +66,7 @@ public class Codex {
             checksum_compare.update(filtered, 0, filtered.length);
             long checksum_compare_long = checksum_compare.getValue();
 
-            if( bytesToLong(tail) != checksum_compare_long) {
+            if( enumerate(tail) != checksum_compare_long) {
                 System.out.println("CRC doesnt check out");
                 return null;
             }
