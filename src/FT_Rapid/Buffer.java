@@ -9,21 +9,36 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * FT-Rapid Buffer
+ */
+
 public class Buffer {
     Queue<DatagramPacket> buffer;
     Lock l;
     Condition cond;
 
+    /**
+     * Construtor que inicializa o Buffer, o Lock e a Condição.
+     */
     public Buffer(){
         buffer = new ArrayDeque<>();
         l = new ReentrantLock();
         cond = l.newCondition();
     }
 
+    /**
+     * Função 'hasElements' que verifica se o Buffer contem algum elemento.
+     * Retorna "true" caso o Buffer possua elementos e retorna "false" caso esteja vazio.
+     */
     public synchronized boolean hasElements(){
         return buffer.size() > 0;
     }
 
+    /**
+     * Função 'takeAll' que acede ao Buffer e tira todos os pacotes que este possua.
+     * Devolve uma lista desses mesmos pacotes.
+     */
     public List<DatagramPacket> takeAll() throws InterruptedException{
         List<DatagramPacket> aux = new ArrayList<>();
         try{
@@ -40,6 +55,10 @@ public class Buffer {
         return aux;
     }
 
+    /**
+     * Função 'take' que acede ao Buffer e tira apenas um pacote que este possua.
+     * Devolve esse mesmo pacote.
+     */
     public DatagramPacket take() throws InterruptedException{
         DatagramPacket d;
         try{
@@ -54,7 +73,10 @@ public class Buffer {
         return d;
     }
 
-
+    /**
+     * Função 'add' que acede ao Buffer e adiciona-lhe um pacote.
+     * @param s DatagramPacket : É o pacote a ser adicionado ao Buffer.
+     */
     public void add(DatagramPacket s){
         try{
             l.lock();
@@ -66,6 +88,10 @@ public class Buffer {
         }
     }
 
+    /**
+     * Função 'addAll' que acede ao Buffer e adiciona-lhe uma lista de pacotes.
+     * @param s List<DatagramPacket> : É a lista de pacotes a ser adicionados ao Buffer.
+     */
     public void addAll(List<DatagramPacket> s){
         try{
             l.lock();
@@ -77,4 +103,3 @@ public class Buffer {
         }
     }
 }
-
