@@ -4,8 +4,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 public class UDPReceiver implements Runnable{
-    private Buffer storagePackage;
-    private DatagramSocket mainSocket;
+    private final Buffer storagePackage;
+    private final DatagramSocket mainSocket;
 
     public UDPReceiver(Buffer buffer, DatagramSocket socket) {
         storagePackage = buffer;
