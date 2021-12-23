@@ -1,9 +1,11 @@
 package TCP;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Queue;
 
 public class TCP implements Runnable {
@@ -20,18 +22,29 @@ public class TCP implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
             try (ServerSocket serverSocket = new ServerSocket(80)) {
-                try (Socket socket = serverSocket.accept()) {
-                    OutputStream s = socket.getOutputStream();
+                while (true) {
+                    try (Socket socket = serverSocket.accept()) {
+                        DataOutputStream s = (DataOutputStream) socket.getOutputStream();
 
-                    //s.
+                    StringBuilder send = new StringBuilder();
+                    send.append("Is connected: ").append(c).append("\n");
+                    send.append("Is in Sync: ").append(i).append("\n");
+                    send.append("List of files in folder:\n");
+                    for (File file : files) {
+                        send.append(file).append("\n");
+                    }
 
+                    byte[] f = send.toString().getBytes(StandardCharsets.UTF_8);
+
+                    s.write(f);
+                    s.close();
+                    socket.close();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
     }
 
 }
