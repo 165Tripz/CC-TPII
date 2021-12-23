@@ -26,6 +26,9 @@ public class FolderWatcher implements Runnable{
         this.path = path;
         sender = buffer;
         this.ip = ip;
+
+
+
     }
 
     public void setFlag(Boolean flag) {

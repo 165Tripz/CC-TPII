@@ -8,7 +8,7 @@ public class Package implements Serializable {
 
     private static int id = 0;
     private final int memID;
-    private int type; // 1 "Ack" | 2 "Syn" | 3 "Req" | 4 "Trf" | 5 "Del" | 6 "Mis" | 7 "RTT" | 8 "Beg" | 9 "Snd"
+    private int type; // 1 "Ack" | 2 "Syn" | 3 "Req" | 5 "Del" | 6 "Mis" | 7 "RTT"  | 9 "Snd"
     private byte[] data;
     private String message;
     private boolean isFinal;
@@ -19,7 +19,7 @@ public class Package implements Serializable {
         this.type = type;
         this.data = data;
         this.isFinal = isFinal;
-        this.message = message;
+        this.message = message; //
     }
 
     public Package() {
