@@ -10,25 +10,34 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class FolderWatcher implements Runnable{
     Path path;
     Buffer sender;
+    Buffer receiver;
     InetAddress ip;
-    Boolean flag = true;
+    Boolean flag = false;
 
-    public FolderWatcher(Path path,Buffer buffer,InetAddress ip) {
+    public FolderWatcher(Path path,Buffer buffer, Buffer receiver,InetAddress ip) {
         this.path = path;
         sender = buffer;
         this.ip = ip;
+        this.receiver = receiver;
 
+        DatagramPacket packet = null;
+        try {
+            packet = receiver.take();
+            Package a = new Package(packet.getData());
+            if (a.getType() == 2);
+                //this.compareFiles(new String(a.getData(), StandardCharsets.UTF_8), this.takeFiles(path), sender);
 
-
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setFlag(Boolean flag) {
@@ -105,6 +114,23 @@ public class FolderWatcher implements Runnable{
          } catch (Exception e) {
              e.printStackTrace();
          }
+    }
+
+    public Queue<File> takeFiles(Path path) {
+        Queue<File> s = new ArrayDeque<>();
+
+        File[] filelist = new File(String.valueOf(path)).listFiles();
+
+        assert filelist != null;
+        for (File file : filelist) {
+            if (file.isDirectory()) {
+                s.addAll(this.takeFiles(file.toPath()));
+            } else {
+                s.add(file);
+            }
+        }
+
+        return s;
     }
 
 }

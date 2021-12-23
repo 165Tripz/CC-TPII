@@ -8,10 +8,14 @@ import FolderManager.SystemChanges;
 
 import java.io.File;
 import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Queue;
 
 public class Manager {
 
@@ -57,8 +61,11 @@ public class Manager {
 
         UDPSender udpSender = new UDPSender(socket,bufferSender);
         UDPReceiver UDPReceiver = new UDPReceiver(bufferReceiver,socket);
-        FolderWatcher watcher = new FolderWatcher(p,bufferSender,ip);
+        FolderWatcher watcher = new FolderWatcher(p,bufferSender,bufferReceiver,ip);
         SystemChanges rule = new SystemChanges(p,bufferReceiver,watcher);
+
+        Queue<File> list = watcher.takeFiles(p);
+        bufferSender.add(this.sendInitial(list,ip));
 
         Thread t1 = new Thread(udpSender);
         Thread t2 = new Thread(UDPReceiver);
@@ -80,6 +87,23 @@ public class Manager {
         }
 
 
+    }
+
+    public DatagramPacket sendInitial (Queue<File> files,InetAddress ip) {
+        StringBuilder text = new StringBuilder();
+        for (File file : files)
+            text.append(file.lastModified()).append("-").append(file).append("\n");
+
+        Package a = new Package();
+        a.setType(2);
+        a.setMessage("Beggining");
+        a.setData(text.toString().getBytes(StandardCharsets.UTF_8));
+
+        byte[] s = a.toBytes();
+
+        DatagramPacket packet = new DatagramPacket(s,s.length, ip, 80);
+
+        return packet;
     }
 
 }
