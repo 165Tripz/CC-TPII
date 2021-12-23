@@ -1,4 +1,3 @@
-
 Okay
 
 Pontos que faltam:
@@ -14,4 +13,3 @@ Pontos que faltam:
 -Fazer a sincronização inicial que acabei de notar que não está
 
 # CC-Trabalho Prático 2
-
