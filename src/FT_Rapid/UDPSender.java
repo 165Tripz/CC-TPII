@@ -4,7 +4,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 /**
- * FT-Rapid Sender
+ * FT-Rapid UDPSender
  */
 
 public class UDPSender implements Runnable {
@@ -13,25 +13,22 @@ public class UDPSender implements Runnable {
     private final Buffer sendPackages;
 
     /**
-     * Constructor parameters
-     * @param socket Socket de porta 80
-     * @param buffer Pacotes que vao ser enviados
+     * Construtor que inicializa o Buffer 'sendPackages' e realiza a atribuição do Socket 'mainSocket'.
+     * @param socket Socket de porta 80.
+     * @param buffer Pacotes que vão ser enviados.
      */
-
     public UDPSender(DatagramSocket socket, Buffer buffer) {
         sendPackages = buffer;
         mainSocket = socket;
     }
 
     /**
-     * Iniciação da thread
+     * Iniciação da Thread
      *
-     * Retira o pacote do buffer
-     * Cria codex e codifica a mensagem
-     * Envia a mensagem
-     *
+     * Retira os Pacotes do Buffer.
+     * Cria Codex e codifica a Mensagem.
+     * Envia a Mensagem.
      */
-
     @Override
     public void run() {
         try {

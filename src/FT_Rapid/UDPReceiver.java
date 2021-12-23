@@ -3,10 +3,19 @@ package FT_Rapid;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
+/**
+ * FT-Rapid UDPReceiver
+ */
+
 public class UDPReceiver implements Runnable{
     private final Buffer storagePackage;
     private final DatagramSocket mainSocket;
 
+    /**
+     * Construtor que inicializa o Buffer 'storagePackages' e realiza a atribuição do Socket 'mainSocket'.
+     * @param socket Socket de porta 80.
+     * @param buffer Pacotes que vão ser enviados.
+     */
     public UDPReceiver(Buffer buffer, DatagramSocket socket) {
         storagePackage = buffer;
         mainSocket = socket;
@@ -24,6 +33,13 @@ public class UDPReceiver implements Runnable{
     }
      */
 
+    /**
+     * Iniciação da Thread.
+     *
+     * Adiciona os Pacotes ao Buffer.
+     * Descodifica a Mensagem através do Codex.
+     * Recebe a Mensagem.
+     */
     @Override
     public void run() {
         try {
