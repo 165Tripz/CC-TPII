@@ -1,5 +1,3 @@
-Okay
-
 Pontos que faltam:
 
 -Relatorio
