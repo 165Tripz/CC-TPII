@@ -7,8 +7,7 @@ import FT_Rapid.UDPReceiver;
 import FolderManager.SystemChanges;
 
 import java.io.File;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.*;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
@@ -20,11 +19,12 @@ public class Manager {
     private boolean connected = false;
 
     String path;
-    String ip;
+    InetAddress ip;
 
-    public Manager(String[] args) {
+    public Manager(String[] args) throws UnknownHostException {
         path = args[0];
-        ip = args[1];
+        ip = InetAddress.getByName(args[1]);
+
     }
 
     public void start() throws SocketException {
@@ -56,8 +56,27 @@ public class Manager {
 
         UDPSender udpSender = new UDPSender(socket,bufferSender);
         UDPReceiver UDPReceiver = new UDPReceiver(bufferReceiver,socket);
-        FolderWatcher watcher = new FolderWatcher(p,bufferSender);
-        SystemChanges rule = new SystemChanges(p,bufferReceiver);
+        FolderWatcher watcher = new FolderWatcher(p,bufferSender,ip);
+        SystemChanges rule = new SystemChanges(p,bufferReceiver,watcher);
+
+        Thread t1 = new Thread(udpSender);
+        Thread t2 = new Thread(UDPReceiver);
+        Thread t3 = new Thread(watcher);
+        Thread t4 = new Thread(rule);
+
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
+
+        try {
+            t1.join();
+            t2.join();
+            t3.join();
+            t4.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
     }
