@@ -12,3 +12,6 @@ Pontos que faltam:
 -Efetuar as sistems changes todas, acho que a maneira de escrita está mal organizada
 
 -Fazer a sincronização inicial que acabei de notar que não está
+
+# CC-Trabalho Prático 2
+
