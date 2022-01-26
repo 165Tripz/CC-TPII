@@ -17,11 +17,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class SystemChanges implements Runnable {
-    private Path folder;
-    private Buffer receiver;
-    private Buffer sender;
-    private FolderWatcher v;
-    private InetAddress ip;
+    private final Path folder;
+    private final Buffer receiver;
+    private final Buffer sender;
+    private final FolderWatcher v;
+    private final InetAddress ip;
     ReentrantLock lock = new ReentrantLock();
     HashMap<String, Queue<Package>> files;
 

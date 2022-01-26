@@ -107,6 +107,8 @@ public class Manager {
         a.setMessage("Beggining");
         a.setData(text.toString().getBytes(StandardCharsets.UTF_16));
 
+        System.out.println(text.toString());
+
         byte[] s = a.toBytes();
 
         DatagramPacket packet = new DatagramPacket(s,s.length, ip, 80);

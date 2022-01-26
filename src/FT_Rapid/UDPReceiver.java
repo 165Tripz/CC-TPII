@@ -56,7 +56,7 @@ public class UDPReceiver implements Runnable{
     public void run() {
         try {
             while (true) {
-                byte[] buffer = new byte[10440];
+                byte[] buffer = new byte[10440*2];
                 DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
                 mainSocket.receive(datagramPacket);
 
@@ -77,7 +77,6 @@ public class UDPReceiver implements Runnable{
                         sender.add(responsePacket);
                     }
 
-                    lock.lock();
                     if (e.getType() == 1) {
                         resend.remove(e.getMemID());
                         response.remove(e.getMemID());
@@ -85,7 +84,6 @@ public class UDPReceiver implements Runnable{
                         DatagramPacket responsePacket = new DatagramPacket(res.toBytes(),res.toBytes().length);
                         sender.add(responsePacket);
                     }
-                    lock.unlock();
 
 
                     storagePackage.add(datagramPacket);

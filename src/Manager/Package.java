@@ -99,7 +99,7 @@ public class Package implements Serializable {
             n[i+4] = aux2[o];
             n[i+8] = aux5[o];
         } i += 8;
-        for (int o = 0; o < 16192 ; o++, i++) {
+        for (int o = 0; o < data.length; o++, i++) {
             n[i] = data[o];
         }
         for (int o = 0; o < aux3.length ; o++, i++) {
