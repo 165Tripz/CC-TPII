@@ -24,33 +24,40 @@ public class Manager {
     String path;
     InetAddress ip;
 
-    public Manager(String[] args) throws UnknownHostException {
-        path = args[1];
-        ip = InetAddress.getByName(args[2]);
-    }
-
     public void start() throws SocketException {
-        Path p = Paths.get(path);
 
+        Scanner in = new Scanner(System.in);
+        Path p;
 
-        try {
-            File file = new File(path);
-            char a = path.charAt(0);
+        while (true) {
+            System.out.print("Enter directory:");
+            this.path = in.nextLine();
+            p = Paths.get(path);
 
-            if (a == '/' || a == '~' || a == '.')
-                throw new InvalidPathException(path, "Invalid Directory");
+            try {
+                File file = new File(path);
+                char a = path.charAt(0);
 
-            if (!file.exists() || !file.isDirectory()) {
-                throw new NotDirectoryException("Not a diretory.");
+                if (a == '/' || a == '~' || a == '.')
+                    throw new InvalidPathException(path, "Invalid Directory");
+
+                if (!file.exists() || !file.isDirectory()) {
+                    throw new NotDirectoryException("Not a diretory.");
+                }
+
+                System.out.println("Destino da pasta : " + p.toAbsolutePath());
+
+                System.out.print("Enter destination:");
+                this.ip = InetAddress.getByName(in.nextLine());
+
+                throw new InterruptedException();
+
+            } catch (InterruptedException ignored) {
+                break;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-
-            System.out.println("Destino da pasta : " + p.toAbsolutePath());
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return;
         }
-
 
         DatagramSocket socket = new DatagramSocket(80);
 
