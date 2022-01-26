@@ -83,18 +83,17 @@ public class FolderWatcher implements Runnable{
                                 File file = new File(String.valueOf(eventPath));
                                 FileConverter r = new FileConverter(file);
                                 Queue<byte[]> c = r.bytify();
-                                int amount = c.size() - 1;
+                                int amount = c.size();
 
                                 for (int i = 0; !c.isEmpty() ; i++) {
                                     Package a = new Package();
 
+                                    a.setMany(amount);
                                     a.setData(c.poll());
-                                    a.setFinal(c.size() != 1);
+                                    a.setFinal(c.size() == 0);
                                     a.setType(kind.equals(StandardWatchEventKinds.ENTRY_CREATE)?9:10);
 
-                                    String string = "(" + i + "/" + amount + "):" + eventPath;
-
-                                    a.setMessage(string);
+                                    a.setMessage(file.getName());
 
                                     byte[] pa = a.toBytes();
 

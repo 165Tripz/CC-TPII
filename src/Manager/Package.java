@@ -9,6 +9,7 @@ public class Package implements Serializable {
     private static int id = 0;
     private final int memID;
     private int type; // 1 "Ack" | 2 "Syn" | 3 "Req" | 5 "Del" | 6 "Mis" | 7 "RTT"  | 9 "Snd"
+    private int many;
     private byte[] data;
     private String message;
     private boolean isFinal;
@@ -26,6 +27,14 @@ public class Package implements Serializable {
         memID = id;
         id++;
         type = 0;
+        data = null;
+        message = null;
+        isFinal = true;
+    }
+
+    public Package(Package e) {
+        this.memID = e.memID;
+        this.type = 1;
         data = null;
         message = null;
         isFinal = true;
@@ -67,20 +76,30 @@ public class Package implements Serializable {
         return isFinal;
     }
 
+    public void setMany(int many) {
+        this.many = many;
+    }
+
+    public int getMany() {
+        return many;
+    }
+
     public byte[] toBytes() {
         byte[] aux = ByteBuffer.allocate(4).putInt(memID).array(); //4
         byte[] aux2 = ByteBuffer.allocate(4).putInt(type).array(); //4
+        byte[] aux5 = ByteBuffer.allocate(4).putInt(many).array(); //4
         byte[] aux3 = message.getBytes(StandardCharsets.UTF_8);
 
-        byte[] n = new byte[1 + 8 + 8096 + aux3.length];
+        byte[] n = new byte[1 + 12 + 16192 + aux3.length];
         n[0] = (byte) (isFinal?1:0);
 
         int i = 1;
         for (int o = 0; o < aux.length ; o++, i++) {
             n[i] = aux[o];
             n[i+4] = aux2[o];
-        } i += 4;
-        for (int o = 0; o < 8096 ; o++, i++) {
+            n[i+8] = aux5[o];
+        } i += 8;
+        for (int o = 0; o < 16192 ; o++, i++) {
             n[i] = data[o];
         }
         for (int o = 0; o < aux3.length ; o++, i++) {
@@ -94,15 +113,17 @@ public class Package implements Serializable {
     public Package(byte[] n) {
         byte[] aux = new byte[4]; //4
         byte[] aux2 = new byte[4]; //4
-        data = new byte[8096];
+        byte[] aux5 = new byte[4];
+        data = new byte[16192];
         byte[] aux4 = new byte[500];
 
         int i = 1;
         for (int o = 0; o < 4 ; o++, i++) {
             aux[o] = n[i];
             aux2[o] = n[i+4];
-        } i += 4;
-        for (int o = 0; o < 8096 ; o++, i++) {
+            aux5[o] = n[i+8];
+        } i += 8;
+        for (int o = 0; o < 16192 ; o++, i++) {
             data[o] = n[i];
         }
         for (int o = 0; o < aux4.length ; o++, i++) {
@@ -112,6 +133,7 @@ public class Package implements Serializable {
         isFinal = (n[0]==1);
         memID = ByteBuffer.wrap(aux).getInt();
         type = ByteBuffer.wrap(aux2).getInt();
+        many = ByteBuffer.wrap(aux5).getInt();
         message = new String(aux4,StandardCharsets.UTF_8);
 
     }

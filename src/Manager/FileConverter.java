@@ -26,12 +26,12 @@ public class FileConverter implements Runnable{
 
     public Queue<byte[]> bytify() {
         try (FileReader fileReader = new FileReader(file)) {
-            char[] buffer = new char[8096];
+            char[] buffer = new char[16192];
             int flag = 1;
             while (flag > 0) {
                 flag = fileReader.read(buffer);
                 CharBuffer charBuffer = CharBuffer.wrap(buffer);
-                ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(charBuffer);
+                ByteBuffer byteBuffer = StandardCharsets.UTF_16.encode(charBuffer);
                 byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
                         byteBuffer.position(), byteBuffer.limit());
                 Arrays.fill(byteBuffer.array(), (byte) 0);

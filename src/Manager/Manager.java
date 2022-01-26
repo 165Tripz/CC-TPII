@@ -14,8 +14,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Manager {
 
@@ -26,9 +25,8 @@ public class Manager {
     InetAddress ip;
 
     public Manager(String[] args) throws UnknownHostException {
-        path = args[0];
-        ip = InetAddress.getByName(args[1]);
-
+        path = args[1];
+        ip = InetAddress.getByName(args[2]);
     }
 
     public void start() throws SocketException {
@@ -58,11 +56,14 @@ public class Manager {
 
         Buffer bufferSender = new Buffer();
         Buffer bufferReceiver = new Buffer();
+        Set<Integer> response = new HashSet<>();
+        HashMap<Integer,Package> resend = new HashMap<Integer, Package>();
+        HashMap<String, Queue<Package>> files = new HashMap<>();
 
         UDPSender udpSender = new UDPSender(socket,bufferSender);
-        UDPReceiver UDPReceiver = new UDPReceiver(bufferReceiver,socket);
+        UDPReceiver UDPReceiver = new UDPReceiver(bufferReceiver,socket,bufferSender,response,resend);
         FolderWatcher watcher = new FolderWatcher(p,bufferSender,bufferReceiver,ip);
-        SystemChanges rule = new SystemChanges(p,bufferReceiver,watcher);
+        SystemChanges rule = new SystemChanges(p,bufferReceiver,watcher,bufferSender,files,ip);
 
         Queue<File> list = watcher.takeFiles(p);
         bufferSender.add(this.sendInitial(list,ip));
@@ -92,12 +93,12 @@ public class Manager {
     public DatagramPacket sendInitial (Queue<File> files,InetAddress ip) {
         StringBuilder text = new StringBuilder();
         for (File file : files)
-            text.append(file.lastModified()).append("-").append(file).append("\n");
+            text.append(file.lastModified()).append("&").append(file).append("\n");
 
         Package a = new Package();
         a.setType(2);
         a.setMessage("Beggining");
-        a.setData(text.toString().getBytes(StandardCharsets.UTF_8));
+        a.setData(text.toString().getBytes(StandardCharsets.UTF_16));
 
         byte[] s = a.toBytes();
 

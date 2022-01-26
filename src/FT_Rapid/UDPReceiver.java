@@ -1,24 +1,36 @@
 package FT_Rapid;
 
+import Manager.Package;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * FT-Rapid UDPReceiver
  */
 
 public class UDPReceiver implements Runnable{
+    private ReentrantLock lock;
     private final Buffer storagePackage;
+    private final Buffer sender;
     private final DatagramSocket mainSocket;
+    private final Set<Integer> response;
+    private final HashMap<Integer, Package> resend;
 
     /**
      * Construtor que inicializa o Buffer 'storagePackages' e realiza a atribuição do Socket 'mainSocket'.
      * @param socket Socket de porta 80.
      * @param buffer Pacotes que vão ser enviados.
      */
-    public UDPReceiver(Buffer buffer, DatagramSocket socket) {
+    public UDPReceiver(Buffer buffer, DatagramSocket socket, Buffer sender, Set<Integer> response, HashMap<Integer, Package> resend) {
         storagePackage = buffer;
+        this.sender = sender;
         mainSocket = socket;
+        this.response = response;
+        this.resend = resend;
     }
 
     /**
@@ -54,6 +66,28 @@ public class UDPReceiver implements Runnable{
                 byte[] desencriptado = x.decrypt(recevido,"FixePataniscas42", datagramPacket.getLength());
                 if (desencriptado != null) {
                     datagramPacket.setData(desencriptado);
+                    Package e = new Package(desencriptado);
+                    Package res = new Package(e);
+
+                    if (response.size() > 3 && e.getMemID() > response.stream().findFirst().get()) {
+                        var eee = resend.get(response.stream().findFirst().get()).toBytes();
+
+                        DatagramPacket responsePacket = new DatagramPacket(eee,eee.length);
+
+                        sender.add(responsePacket);
+                    }
+
+                    lock.lock();
+                    if (e.getType() == 1) {
+                        resend.remove(e.getMemID());
+                        response.remove(e.getMemID());
+                    } else {
+                        DatagramPacket responsePacket = new DatagramPacket(res.toBytes(),res.toBytes().length);
+                        sender.add(responsePacket);
+                    }
+                    lock.unlock();
+
+
                     storagePackage.add(datagramPacket);
                 }
             }

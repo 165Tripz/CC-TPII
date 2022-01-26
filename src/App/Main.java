@@ -10,7 +10,8 @@ public class Main {
 
         try {
             Manager manager = new Manager(args);
-        } catch (UnknownHostException e) {
+            manager.start();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
